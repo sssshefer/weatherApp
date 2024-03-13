@@ -36,11 +36,11 @@ function App() {
                     <tbody>
                     <tr>
                         <th>Temperature:</th>
-                        <th>{temperature}</th>
+                        <th>{temperature} &#8451; </th>
                     </tr>
                     <tr>
                         <th>Humidity:</th>
-                        <th>{humidity}</th>
+                        <th>{humidity} %</th>
                     </tr>
                     <tr></tr>
                     <tr>
