@@ -1,35 +1,70 @@
 import cl from './App.module.css';
 import {useEffect, useState} from "react";
-import {fetchDataFromServer, sendDataToServer} from "../shared/api/api";
+import {fetchWeatherInfo, postWeatherInfo} from "../shared/api/api";
 
 function App() {
-    const [data, setData] = useState({})
-    const [fetchedData, setFetchedData] = useState({})
+    const [inputValue, setInputValue] = useState({})
+    const [temperature, setTemperature] = useState(0)
+    const [humidity, setHumidity] = useState(0)
+    const [date, setDate] = useState('')
+
     useEffect(() => {
-        refreshDataFromServer()
+        refreshData()
     }, [])
 
-    async function refreshDataFromServer() {
-        const data = await fetchDataFromServer()
-        setFetchedData(data)
+    async function refreshData() {
+        const fetchedData = await fetchWeatherInfo()
+        console.log(fetchedData)
+        setTemperature(Number(fetchedData.temperature))
+        setHumidity(Number(fetchedData.humidity))
+        const creationDate = new Date(fetchedData.date)
+        setDate(creationDate.toLocaleDateString() + ' ' + creationDate.toLocaleTimeString())
     }
 
-    async function handleSendDataToServer(data) {
-        sendDataToServer(data)
+    async function handleSendData(data) {
+        await postWeatherInfo(data)
     }
 
     return (
         <div className={cl.wrap}>
-            <a onClick={() => refreshDataFromServer()}>
-                Get new data from server
-            </a>
-            <div className={cl.dataWrap}>
-                Last data from the server: <span className={cl.data}>{fetchedData.data}</span>
+            <div className={cl.weatherInfoCard}>
+                <div className={cl.titleWrap}>
+                    <h1 className={cl.title}>Weather Info</h1>
+
+                </div>
+                <table>
+                    <tbody>
+                    <tr>
+                        <th>Temperature:</th>
+                        <th>{temperature}</th>
+                    </tr>
+                    <tr>
+                        <th>Humidity:</th>
+                        <th>{humidity}</th>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <th>Date:</th>
+                        <th>{date.split(' ')[0]}</th>
+                    </tr>
+                    <tr>
+                        <th>Time:</th>
+                        <th>{date.split(' ')[1]}</th>
+                    </tr>
+                    </tbody>
+
+                </table>
+                <button onClick={() => refreshData()} className={cl.focusButton}>
+                    Refresh
+                </button>
             </div>
-            <a onClick={() => handleSendDataToServer(data)}>
-                (Test) Send data to server
-            </a>
-            <input type="text" onChange={(e) => setData(e.target.value)}/>
+            <div className={cl.inputWrap}>
+                <input type="text" onChange={(e) => setInputValue(e.target.value)}/>
+                <button onClick={() => handleSendData(inputValue)} className={cl.focusButton}>
+                    (Test) Send data to server
+                </button>
+            </div>
+
         </div>
     );
 }

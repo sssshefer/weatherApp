@@ -1,25 +1,47 @@
-const fs
-    = require('node:fs');
+const WeatherService = require('../services/WeatherService');
 
 class controller {
     async setData(req, res, next) {
-        try {
-            const data = String(req.body.data)
 
-           await  fs.promises.writeFile('./data.txt', data);
-            return res.json({})
+        const mqttMessage = req.body.message;
+        const {temperature, humidity} = JSON.parse(mqttMessage);
+
+        try {
+            const weatherInfo = await WeatherService.saveRecord(temperature, humidity);
+            res.status(200).json({
+                success: true,
+                message: "Weather info successfully saved to DB!",
+                weatherData: weatherInfo,
+            });
         } catch (e) {
-            next(e)
+            res.status(400).json({
+                success: false,
+                message: e.message,
+            });
         }
     }
 
     async getData(req, res, next) {
         try {
-            let data = undefined;
-            data = await fs.promises.readFile('./data.txt', 'utf8');
-            return res.json({ data: data });
+            const lastRecord = await WeatherService.getLastRecord()
+
+            if (!lastRecord) {
+                res.status(200).json({
+                    success: false,
+                    message: "No records found in the database",
+                });
+            } else {
+                res.status(200).json({
+                    success: true,
+                    message: "Weather info found successfully !",
+                    data: lastRecord,
+                });
+            }
         } catch (e) {
-            next(e);
+            res.status(400).json({
+                success: false,
+                message: e.message,
+            });
         }
     }
 }
