@@ -4,8 +4,8 @@ import {fetchWeatherInfo, postWeatherInfo} from "../shared/api/api";
 
 function App() {
     const [inputValue, setInputValue] = useState({})
-    const [temperature, setTemperature] = useState(0)
-    const [humidity, setHumidity] = useState(0)
+    const [temperature, setTemperature] = useState('')
+    const [humidity, setHumidity] = useState('')
     const [date, setDate] = useState('')
 
     useEffect(() => {
@@ -15,8 +15,14 @@ function App() {
     async function refreshData() {
         const fetchedData = await fetchWeatherInfo()
         console.log(fetchedData)
-        setTemperature(Number(fetchedData.temperature))
-        setHumidity(Number(fetchedData.humidity))
+        if(!fetchedData){
+            setTemperature('No data')
+            setHumidity('No data')
+        }else{
+            setTemperature(fetchedData.temperature)
+            setHumidity(fetchedData.humidity)
+        }
+
         const creationDate = new Date(fetchedData.date)
         setDate(creationDate.toLocaleDateString() + ' ' + creationDate.toLocaleTimeString())
     }
