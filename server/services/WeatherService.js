@@ -1,4 +1,4 @@
-const WeatherInfo = require("../models/weatherInfo");
+import WeatherInfo from '../models/weatherInfo.js'
 
 class WeatherService {
     async saveRecord(temperature, humidity) {
@@ -15,4 +15,4 @@ class WeatherService {
     }
 }
 
-module.exports = new WeatherService();
+export default new WeatherService();

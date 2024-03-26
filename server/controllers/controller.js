@@ -1,10 +1,13 @@
-const WeatherService = require('../services/WeatherService');
+import WeatherService from '../services/WeatherService.js';
 
 class controller {
     async setData(req, res, next) {
+        if (req.body.message === 'MQTT server is connected successfully') {
+            console.log('First message is sent successfully')
+            return next()
+        }
 
-        const mqttMessage = req.body.message;
-        const {temperature, humidity} = JSON.parse(mqttMessage);
+        const {temperature, humidity} = req.body.message;
 
         try {
             const weatherInfo = await WeatherService.saveRecord(temperature, humidity);
@@ -17,6 +20,7 @@ class controller {
             res.status(400).json({
                 success: false,
                 message: e.message,
+                data: 'error'
             });
         }
     }
@@ -33,7 +37,7 @@ class controller {
             } else {
                 res.status(200).json({
                     success: true,
-                    message: "Weather info found successfully !",
+                    message: "Weather info found successfully!",
                     data: lastRecord,
                 });
             }
@@ -46,4 +50,4 @@ class controller {
     }
 }
 
-module.exports = new controller()
+export default new controller();

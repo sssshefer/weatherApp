@@ -1,9 +1,9 @@
-const WeatherRouter = require('express')
+import WeatherRouter from 'express'
+import controller from '../controllers/controller.js';
 const router = new WeatherRouter()
-const controller = require('../controllers/controller')
 
 router.post('/setWeatherInfo', controller.setData)
 router.get('/getLastWeatherInfo', controller.getData)
 
 
-module.exports = router
+export default router;
